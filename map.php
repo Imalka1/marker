@@ -1,7 +1,7 @@
 <?php
 session_start();
-if (isset($_SESSION["logSession"])) {
-    header("Location:map.php");
+if (!isset($_SESSION["logSession"])) {
+    header("Location:index.php");
 }
 ?>
 <!DOCTYPE html>
