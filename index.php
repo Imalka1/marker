@@ -1,3 +1,13 @@
+<?php
+session_start();
+if (isset($_SESSION["logSession"])) {
+    header("Location:start.php");
+}
+$error = "";
+if (!empty($_GET["error"])) {
+    $error = $_GET["error"];
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,6 +36,18 @@
 <div class="limiter">
     <div class="container-login100">
         <div class="wrap-login100">
+            <?php
+            if ($error == "error") {
+                ?>
+                <div class="col-sm-12 message">
+                    <div class="alert alert-danger alert-dismissable"><a href="#" class="close" data-dismiss="alert"
+                                                                         aria-label="close">&times;</a><strong>Alert!</strong>
+                        Incorrect Username Or Password.
+                    </div>
+                </div>
+                <?php
+            }
+            ?>
             <div class="login100-pic js-tilt" data-tilt>
                 <img src="assets/images/img-01.png" alt="IMG">
             </div>
@@ -35,7 +57,7 @@
 						Member Login
 					</span>
 
-                <div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+                <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
                     <input class="input100" type="text" name="email" placeholder="Email">
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
@@ -43,7 +65,7 @@
 						</span>
                 </div>
 
-                <div class="wrap-input100 validate-input" data-validate = "Password is required">
+                <div class="wrap-input100 validate-input" data-validate="Password is required">
                     <input class="input100" type="password" name="pass" placeholder="Password">
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
@@ -78,8 +100,6 @@
 </div>
 
 
-
-
 <!--===============================================================================================-->
 <script src="assets/vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->
@@ -89,7 +109,7 @@
 <script src="assets/vendor/select2/select2.min.js"></script>
 <!--===============================================================================================-->
 <script src="assets/vendor/tilt/tilt.jquery.min.js"></script>
-<script >
+<script>
     $('.js-tilt').tilt({
         scale: 1.1
     })
