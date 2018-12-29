@@ -4,12 +4,12 @@ $user = $_POST["email"];
 $password = $_POST["pass"];
 $connection = mysqli_connect("localhost", "root", "mysql", "marker", "3306");
 $login = mysqli_query($connection, "select id from user where username='$user' && password='$password'");
-$lid = "";
+$id = "";
 if ($login != null) {
-    $lid = mysqli_fetch_assoc($login)["id"];
+    $id = mysqli_fetch_assoc($login)["id"];
 }
 
-if (!empty($lid)) {
+if (!empty($id)) {
     $_SESSION["logSession"] = "logged";
     header("Location:map.php");
 } else {
