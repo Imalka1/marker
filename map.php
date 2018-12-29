@@ -1,3 +1,9 @@
+<?php
+session_start();
+if (isset($_SESSION["logSession"])) {
+    header("Location:map.php");
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
