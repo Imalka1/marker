@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_SESSION["logSession"])) {
-    header("Location:start.php");
+    header("Location:map.php");
 }
 $error = "";
 if (!empty($_GET["error"])) {
