@@ -52,7 +52,7 @@ if (!empty($_GET["error"])) {
                 <img src="assets/images/img-01.png" alt="IMG">
             </div>
 
-            <form class="login100-form validate-form">
+            <form method="post" action="login.php">
 					<span class="login100-form-title">
 						Member Login
 					</span>
@@ -74,7 +74,7 @@ if (!empty($_GET["error"])) {
                 </div>
 
                 <div class="container-login100-form-btn">
-                    <button class="login100-form-btn">
+                    <button class="login100-form-btn" type="submit">
                         Login
                     </button>
                 </div>
