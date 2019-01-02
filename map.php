@@ -8,6 +8,8 @@ if (!isset($_SESSION["logSession"])) {
 <html>
 <head>
     <title>Google Map</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript"
@@ -152,7 +154,7 @@ if (!isset($_SESSION["logSession"])) {
                 //Content structure of info Window for the Markers
                 var contentString = $('<div class="marker-info-win">' +
                     '<div class="marker-inner-win"><span class="info-content">' +
-                    '<img width="200px" height="200px" src="' + window.location.origin +'/'+window.location.pathname.split('/')[1]+ '/' + img + '" ' +
+                    '<img width="200px" height="200px" src="' + window.location.origin + '/' + window.location.pathname.split('/')[1] + '/' + img + '" ' +
                     '</div>' +
                     '<div class="marker-inner-win"><span class="info-content">' +
                     '<h1 class="marker-heading">' + MapTitle + '</h1>' +
@@ -348,6 +350,13 @@ if (!isset($_SESSION["logSession"])) {
     </style>
 </head>
 <body>
+<div class="row">
+    <div class="col-sm-12">
+        <form action="logout.php" method="post">
+            <button type="submit" class="btn btn-primary">Logout</button>
+        </form>
+    </div>
+</div>
 <h1 class="heading">My Google Map</h1>
 <div align="center">Right Click to Drop a New Marker</div>
 <div id="google_map"></div>
