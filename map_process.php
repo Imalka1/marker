@@ -94,7 +94,8 @@ if ($_POST) //run only if there's a post data
         exit();
     }
 
-    $output = '<h1 class="marker-heading">' . $mName . '</h1><p>' . $mAddress . '</p>';
+    $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . str_replace(basename($_SERVER['SCRIPT_NAME']), "", $_SERVER['SCRIPT_NAME']);
+    $output = '<img width="200px" height="200px" src="' . $actual_link . $target_file . '"><br><h1 class="marker-heading">' . $mName . '</h1><p>' . $mAddress . '</p>';
     exit($output);
 }
 
@@ -125,6 +126,7 @@ while ($obj = $results->fetch_object()) {
     $newnode->setAttribute("lat", $obj->lat);
     $newnode->setAttribute("lng", $obj->lng);
     $newnode->setAttribute("type", $obj->type);
+    $newnode->setAttribute("img", $obj->imgLocation);
 }
 
 echo $dom->saveXML();

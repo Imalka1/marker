@@ -44,7 +44,8 @@ if (!isset($_SESSION["logSession"])) {
                         var address = '<p>' + $(this).attr('address') + '</p>';
                         var type = $(this).attr('type');
                         var point = new google.maps.LatLng(parseFloat($(this).attr('lat')), parseFloat($(this).attr('lng')));
-                        create_marker(point, name, address, false, false, false, "icons/pin_blue.png");
+                        var img = $(this).attr('img');
+                        create_marker2(point, name, address, false, false, false, "icons/pin_blue.png", img);
                     });
                 });
 
@@ -53,8 +54,7 @@ if (!isset($_SESSION["logSession"])) {
                     //Edit form to be displayed with new marker
                     var EditForm = '<p><div class="marker-edit">' +
                         '<form action="ajax-save.php" method="POST" name="SaveMarker" id="SaveMarker">' +
-                        // '<label><img src="images/abc.JPG" width="200px" height="200px"></label>' +
-                        '<label><span>Image :</span><input class="fileUp" id="sortpicture" type="file" name="imgUpload"></label>' +
+                        '<label><span>Image :</span><input class="fileUp" id="sortpicture" type="file" name="imgUpload" accept="image/*"></label>' +
                         '<label for="pName"><span>Place Name :</span><input type="text" name="pName" class="save-name" placeholder="Enter Title" maxlength="40" /></label>' +
                         '<label for="pDesc"><span>Description :</span><textarea name="pDesc" class="save-desc" placeholder="Enter Address" maxlength="150"></textarea></label>' +
                         '<label for="pType"><span>Type :</span> <select name="pType" class="save-type">' +
@@ -65,13 +65,13 @@ if (!isset($_SESSION["logSession"])) {
                         '</div></p><button type="submit" name="save-marker" class="save-marker">Save Marker Details</button>';
 
                     //Drop a new Marker with our Edit Form
-                    create_marker(event.latLng, 'New Marker', EditForm, true, true, true, "icons/pin_green.png");
+                    create_marker1(event.latLng, 'New Marker', EditForm, true, true, true, "icons/pin_green.png");
                 });
 
             }
 
             //############### Create Marker Function ##############
-            function create_marker(MapPos, MapTitle, MapDesc, InfoOpenDefault, DragAble, Removable, iconPath) {
+            function create_marker1(MapPos, MapTitle, MapDesc, InfoOpenDefault, DragAble, Removable, iconPath, img) {
 
                 //new marker
                 var marker = new google.maps.Marker({
@@ -85,6 +85,75 @@ if (!isset($_SESSION["logSession"])) {
 
                 //Content structure of info Window for the Markers
                 var contentString = $('<div class="marker-info-win">' +
+                    '<div class="marker-inner-win"><span class="info-content">' +
+                    '<h1 class="marker-heading">' + MapTitle + '</h1>' +
+                    MapDesc +
+                    '</span><button name="remove-marker" class="remove-marker" title="Remove Marker">Remove Marker</button>' +
+                    '</div></div>');
+
+
+                //Create an infoWindow
+                var infowindow = new google.maps.InfoWindow();
+                //set the content of infoWindow
+                infowindow.setContent(contentString[0]);
+
+                //Find remove button in infoWindow
+                var removeBtn = contentString.find('button.remove-marker')[0];
+                var saveBtn = contentString.find('button.save-marker')[0];
+
+                //add click listner to remove marker button
+                google.maps.event.addDomListener(removeBtn, "click", function (event) {
+                    remove_marker(marker);
+                });
+
+                if (typeof saveBtn !== 'undefined') //continue only when save button is present
+                {
+                    //add click listner to save marker button
+                    google.maps.event.addDomListener(saveBtn, "click", function (event) {
+                        var mReplace = contentString.find('span.info-content'); //html to be replaced after success
+                        var mName = contentString.find('input.save-name')[0].value; //name input field value
+                        var mDesc = contentString.find('textarea.save-desc')[0].value; //description input field value
+                        var mType = contentString.find('select.save-type')[0].value; //type of marker
+                        var mImg = contentString.find('input.fileUp')[0].value.split('\\').pop(); //type of marker
+                        // console.log(mImg)
+
+                        if (mName == '' || mDesc == '') {
+                            alert("Please enter Name and Description!");
+                        } else {
+                            save_marker(marker, mName, mDesc, mType, mReplace, mImg); //call save marker function
+                        }
+                    });
+                }
+
+                //add click listner to save marker button
+                google.maps.event.addListener(marker, 'click', function () {
+                    infowindow.open(map, marker); // click on marker opens info window
+                });
+
+                if (InfoOpenDefault) //whether info window should be open by default
+                {
+                    infowindow.open(map, marker);
+                }
+            }
+
+            //############### Create Marker Function ##############
+            function create_marker2(MapPos, MapTitle, MapDesc, InfoOpenDefault, DragAble, Removable, iconPath, img) {
+
+                //new marker
+                var marker = new google.maps.Marker({
+                    position: MapPos,
+                    map: map,
+                    draggable: DragAble,
+                    animation: google.maps.Animation.DROP,
+                    title: "Hello World!",
+                    icon: iconPath
+                });
+
+                //Content structure of info Window for the Markers
+                var contentString = $('<div class="marker-info-win">' +
+                    '<div class="marker-inner-win"><span class="info-content">' +
+                    '<img width="200px" height="200px" src="' + window.location.origin +'/'+window.location.pathname.split('/')[1]+ '/' + img + '" ' +
+                    '</div>' +
                     '<div class="marker-inner-win"><span class="info-content">' +
                     '<h1 class="marker-heading">' + MapTitle + '</h1>' +
                     MapDesc +
