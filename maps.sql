@@ -6,6 +6,9 @@
 -- Generation Time: Dec 27, 2018 at 05:45 PM
 -- Server version: 10.1.29-MariaDB
 -- PHP Version: 7.2.0
+drop database marker;
+create database marker;
+use marker;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -62,7 +65,8 @@ CREATE TABLE `markers` (
   `address` varchar(80) NOT NULL,
   `lat` float(10,6) NOT NULL,
   `lng` float(10,6) NOT NULL,
-  `type` varchar(30) NOT NULL
+  `type` varchar(30) NOT NULL,
+  `imgLocation` varchar(100) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 CREATE TABLE `user` (

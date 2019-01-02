@@ -9,6 +9,7 @@ if (!isset($_SESSION["logSession"])) {
 <head>
     <title>Google Map</title>
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript"
             src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDo6Aeq3MlAfLTBqy-TyXKnlxAz_lwgxR4&sensor=false"></script>
     <script type="text/javascript">
@@ -52,13 +53,16 @@ if (!isset($_SESSION["logSession"])) {
                     //Edit form to be displayed with new marker
                     var EditForm = '<p><div class="marker-edit">' +
                         '<form action="ajax-save.php" method="POST" name="SaveMarker" id="SaveMarker">' +
-                        '<label><img src="images/abc.JPG" width="200px" height="200px"></label>' +
+                        // '<label><img src="images/abc.JPG" width="200px" height="200px"></label>' +
+                        '<label><span>Image :</span><input class="fileUp" id="sortpicture" type="file" name="imgUpload"></label>' +
                         '<label for="pName"><span>Place Name :</span><input type="text" name="pName" class="save-name" placeholder="Enter Title" maxlength="40" /></label>' +
                         '<label for="pDesc"><span>Description :</span><textarea name="pDesc" class="save-desc" placeholder="Enter Address" maxlength="150"></textarea></label>' +
-                        '<label for="pType"><span>Type :</span> <select name="pType" class="save-type"><option value="restaurant">Rastaurant</option><option value="bar">Bar</option>' +
+                        '<label for="pType"><span>Type :</span> <select name="pType" class="save-type">' +
+                        '<option value="restaurant">Rastaurant</option><option value="bar">Bar</option>' +
                         '<option value="house">House</option></select></label>' +
+                        '<label><input type="hidden" value="' + event.latLng + '" name="geoLocation"></label>' +
                         '</form>' +
-                        '</div></p><button name="save-marker" class="save-marker">Save Marker Details</button>';
+                        '</div></p><button type="submit" name="save-marker" class="save-marker">Save Marker Details</button>';
 
                     //Drop a new Marker with our Edit Form
                     create_marker(event.latLng, 'New Marker', EditForm, true, true, true, "icons/pin_green.png");
@@ -110,11 +114,13 @@ if (!isset($_SESSION["logSession"])) {
                         var mName = contentString.find('input.save-name')[0].value; //name input field value
                         var mDesc = contentString.find('textarea.save-desc')[0].value; //description input field value
                         var mType = contentString.find('select.save-type')[0].value; //type of marker
+                        var mImg = contentString.find('input.fileUp')[0].value.split('\\').pop(); //type of marker
+                        // console.log(mImg)
 
                         if (mName == '' || mDesc == '') {
                             alert("Please enter Name and Description!");
                         } else {
-                            save_marker(marker, mName, mDesc, mType, mReplace); //call save marker function
+                            save_marker(marker, mName, mDesc, mType, mReplace, mImg); //call save marker function
                         }
                     });
                 }
@@ -159,15 +165,27 @@ if (!isset($_SESSION["logSession"])) {
             }
 
             //############### Save Marker Function ##############
-            function save_marker(Marker, mName, mAddress, mType, replaceWin) {
+            function save_marker(Marker, mName, mAddress, mType, replaceWin, imgUpload) {
                 //Save new marker using jQuery Ajax
                 var mLatLang = Marker.getPosition().toUrlValue(); //get marker position
-                var myData = {name: mName, address: mAddress, latlang: mLatLang, type: mType}; //post variables
+                var file_data = $('#sortpicture').prop('files')[0];
+                console.log(file_data)
+                var form_data = new FormData(this);
+                form_data.append('file', file_data);
+                form_data.append('name', mName);
+                form_data.append('address', mAddress);
+                form_data.append('latlang', mLatLang);
+                form_data.append('type', mType);
+                var myData = {name: mName, address: mAddress, latlang: mLatLang, type: mType, file: form_data}; //post variables
                 console.log(replaceWin);
                 $.ajax({
                     type: "POST",
                     url: "map_process.php",
-                    data: myData,
+                    dataType: 'text',  // what to expect back from the PHP script, if anything
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: form_data,
                     success: function (data) {
                         replaceWin.html(data); //replace info window with new html
                         Marker.setDraggable(false); //set marker to fixed
